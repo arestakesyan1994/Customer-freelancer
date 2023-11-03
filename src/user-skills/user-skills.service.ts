@@ -19,14 +19,14 @@ export class UserSkillsService {
   async create(createUserSkillDto: any) {
     const skill = await this.skillRepository.findOneBy({ id: createUserSkillDto.skillId })
     if (!skill) {
-      throw new NotFoundException('skills not found');
+      throw new NotFoundException('Oops! skills not found');
     }
     const user = await this.userRepository.findOneBy({ id: createUserSkillDto.userId })
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('Oops! user not found');
     }
     if (user.role != 2) {
-      throw new NotFoundException('you do not have access');
+      throw new NotFoundException('Oops! you do not have access');
     }
     const userskill = await this.userSkillRepository.find({
       where: {
@@ -35,7 +35,7 @@ export class UserSkillsService {
       },
     })
     if (userskill.length) {
-      throw new NotFoundException('user skills has already');
+      throw new NotFoundException('Oops! user skills has already');
     }
     await this.userSkillRepository.save(createUserSkillDto)
     return 'adds a new user skill';
@@ -52,7 +52,7 @@ export class UserSkillsService {
     if (userskill) {
       return userskill;
     } else {
-      throw new NotFoundException('user skills not found');
+      throw new NotFoundException('Oops! user skills not found');
     }
   }
 
@@ -62,7 +62,7 @@ export class UserSkillsService {
       this.userSkillRepository.delete({ id })
       return "delete user skill - " + skill.id;
     } else {
-      throw new NotFoundException('user skills not found');
+      throw new NotFoundException('Oops! user skills not found');
     }
   }
 }

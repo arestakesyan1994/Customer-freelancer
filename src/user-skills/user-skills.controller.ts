@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus
 import { UserSkillsService } from './user-skills.service';
 import { CreateUserSkillDto } from './dto/create-user-skill.dto';
 import { UpdateUserSkillDto } from './dto/update-user-skill.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/user/role/role.enum';
 import { HasRoles } from 'src/auth/has-roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -17,6 +17,7 @@ export class UserSkillsController {
   constructor(private readonly userSkillsService: UserSkillsService) { }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @HasRoles(Role.FREELANCER)
   @Post()
   async create(@Body() createUserSkillDto: CreateUserSkillDto, @Res() res: Response, @Request() req) {
@@ -32,6 +33,7 @@ export class UserSkillsController {
 
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get(":userId")
   async findSkillByFreelacerId(@Param("userId") id: number, @Res() res: Response) {
     try {
@@ -46,6 +48,7 @@ export class UserSkillsController {
 
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @HasRoles(Role.FREELANCER)
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {

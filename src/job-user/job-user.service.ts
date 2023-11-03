@@ -18,11 +18,11 @@ export class JobUserService {
   async create(createJobUserDto: any) {
     const user = await this.userRepository.findOneBy({ id: createJobUserDto.userId })
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('Oops! user not found');
     }
     const job = await this.jobRepository.findOneBy({ id: createJobUserDto.jobId })
     if (!job) {
-      throw new NotFoundException('job not found');
+      throw new NotFoundException('Oops! job not found');
     }
     const userjob = await this.jobUserRepository.findOne({
       where: {
@@ -31,7 +31,7 @@ export class JobUserService {
       },
     })
     if (userjob) {
-      throw new NotFoundException('jobUser has already');
+      throw new NotFoundException('Oops! jobUser has already');
     } else {
       await this.jobUserRepository.save(createJobUserDto)
       return 'adds a new jobUser';
@@ -48,7 +48,7 @@ export class JobUserService {
       }
     })
     if (!job) {
-      throw new NotFoundException("job not fount")
+      throw new NotFoundException("Oops! job not fount")
     } else {
       return job
     }
@@ -64,7 +64,7 @@ export class JobUserService {
       }
     })
     if (!job) {
-      throw new NotFoundException("job not fount")
+      throw new NotFoundException("Oops! job not fount")
     } else {
       return job
     }
@@ -85,10 +85,10 @@ export class JobUserService {
         }
         return `Updated job - ${job.id}`;
       }else{
-        throw new NotFoundException('done value invalid');
+        throw new NotFoundException('Oops! done value invalid');
       }
     } else {
-      throw new NotFoundException('jobUser not found');
+      throw new NotFoundException('Oops! jobUser not found');
     }
   }
 
@@ -98,7 +98,7 @@ export class JobUserService {
       this.jobUserRepository.delete({ id })
       return "delete job - " + job.id;
     } else {
-      throw new NotFoundException('jobUser not found');
+      throw new NotFoundException('Oops! jobUser not found');
     }
   }
 }

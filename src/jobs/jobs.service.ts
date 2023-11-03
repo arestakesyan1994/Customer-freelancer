@@ -41,7 +41,7 @@ export class JobsService {
       }
     })
     if (!job) {
-      throw new NotFoundException("job not fount")
+      throw new NotFoundException("Oops! job not fount")
     } else {
       return job
     }
@@ -54,7 +54,7 @@ export class JobsService {
       relations: [  "jobSkills", "jobSkills.skill", 'freelancer']
     })
     if (!job) {
-      throw new NotFoundException("job not fount")
+      throw new NotFoundException("Oops! job not fount")
     } else {
       return job
     }
@@ -67,7 +67,7 @@ export class JobsService {
       relations: [  "jobSkills", "jobSkills.skill", 'customer']
     })
     if (!job) {
-      throw new NotFoundException("job not fount")
+      throw new NotFoundException("Oops! job not fount")
     } else {
       return job
     }
@@ -82,7 +82,7 @@ export class JobsService {
       }
     })
     if (!job) {
-      throw new NotFoundException("job not fount")
+      throw new NotFoundException("Oops! job not fount")
     } else {
       return job
     }
@@ -99,7 +99,7 @@ export class JobsService {
       await this.jobRepository.update({ id }, updateJobDto);
       return `Updated job - ${job.title}`;
     } else {
-      return new NotFoundException('job not found');
+      return new NotFoundException('Oops! job not found');
     }
   }
   async updateJobStatus(id: number,{num} : {num:number}) {
@@ -113,10 +113,10 @@ export class JobsService {
         await this.jobRepository.update({ id }, {status:num});
         return `Updated job - ${job.title}`;
       }else{
-        throw new NotFoundException('status value invalid');
+        throw new NotFoundException('Oops! status value invalid');
       }
     } else {
-      throw new NotFoundException('job not found');
+      throw new NotFoundException('Oops! job not found');
     }
   }
 
@@ -126,7 +126,7 @@ export class JobsService {
       this.jobRepository.delete({ id })
       return "delete job - " + job.title;
     } else {
-      throw new NotFoundException('job not found');
+      throw new NotFoundException('Oops! job not found');
     }
   }
 }

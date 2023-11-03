@@ -25,14 +25,26 @@ export class FreelancerService {
   }
 
   async findOne(id: number) {
-    return await this.freelancerRepository.findOne({
-      where: {
-        id
-      },
-      relations: {
-        user:true
-      }
-    }) 
+
+    return await  this.freelancerRepository
+    .createQueryBuilder('freelancer')  
+    .where('freelancer.id = :id', { id })
+    .leftJoinAndSelect('freelancer.jobs', 'job')
+    .leftJoinAndSelect('job.feedback', 'feedback')
+    // .select("AVG(feedback.rate)", "freelancer.rating")
+    // .addSelect('AVG(feedback.rate)', 'temp_stars')      //please note the aliasing here
+    // .leftJoinAndSelect('temp.category', 'category')
+    .getOne();
+
+
+    // return await this.freelancerRepository.findOne({
+    //   where: {
+    //     id
+    //   },
+    //   relations: {
+    //     user:true
+    //   }
+    // }) 
   }
 
   async findUserBySkillAndSalary({ skill, minsalary, maxsalary }: { skill: string, minsalary: number, maxsalary: number }) {
@@ -81,7 +93,7 @@ export class FreelancerService {
       this.freelancerRepository.update({ id }, updateFreelancerDto)
       return "delete freelancer - " + us.id;
     } else {
-      throw new NotFoundException('freelancer not found');
+      throw new NotFoundException('Oops! freelancer not found');
     }
   }
 
@@ -91,6 +103,6 @@ export class FreelancerService {
       this.freelancerRepository.delete({ id })
       return "delete freelancer - " + us.id;
     } else {
-      throw new NotFoundException('freelancer not found');
+      throw new NotFoundException('Oops! freelancer not found');
     }  }
 }

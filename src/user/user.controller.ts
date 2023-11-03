@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
-import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger/dist/decorators';
+import { ApiBearerAuth, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger/dist/decorators';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 
@@ -20,6 +20,7 @@ export class UserController {
 
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description: "գրանցվելիս հարկավոր է իրականացնել վերիֆիկացիա ըստ email, հարցմանը հարկավոր է ուղարկել 2 տվյալ email և emailToken, որը հարկավոր է վերցնել path-ից" })
   @Post("/verify")
   async verify(@Body() user: Verify, @Res() res: Response) {
     try {
@@ -34,6 +35,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
+  @ApiResponse({ description: "հնարավորություն է տալիս վերցնել բոլոր user-ի տվյալները" })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async findAll(@Res() res: Response) {
@@ -46,9 +48,10 @@ export class UserController {
       })
     }
   }
- 
+
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description: "հնարավորություն է տալիս վերցնել user-ի տվյալը ըստ id-ի" })
   @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
@@ -66,6 +69,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
+  @ApiResponse({ description: "հնարավորություն է տալիս փոփոխել user-ի տվյալները -> name, surname, password" })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
@@ -80,6 +84,7 @@ export class UserController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description: "հնարավորություն է տալիս ջնջել user-ին" })
   @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')

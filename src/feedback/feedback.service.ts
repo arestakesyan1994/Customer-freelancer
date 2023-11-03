@@ -21,11 +21,11 @@ export class FeedbackService {
   async create(createFeedbackDto: any) {
     const us = await this.userRepository.findOneBy({ id: createFeedbackDto.user.userId })
     if (!us) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('Oops! user not found');
     }
     const job = await this.jobRepository.findOneBy({ id: createFeedbackDto.jobId })
     if (!job) {
-      throw new NotFoundException('job not found');
+      throw new NotFoundException('Oops! job not found');
     }
     const feed = await this.feedbackRepository.findOne({
       where: {
@@ -34,14 +34,18 @@ export class FeedbackService {
       },
     })
     if (feed) {
-      throw new NotFoundException('jobUser has already');
+      throw new NotFoundException('Oops! jobUser has already');
     } else {
       const { user, ...data } = createFeedbackDto;
-      if (job.customerId == user.customer[0].id) {
+      if (job.customerId == user.customer[0].id && job.status == 2) {
         await this.feedbackRepository.save(data)
         return 'adds a new order';
       } else {
-        throw new NotFoundException('you do not have access');
+        if (job.status != 2) {
+          throw new NotFoundException('Oops! that work is not done');
+        } else {
+          throw new NotFoundException('Oops! you do not have access');
+        }
       }
     }
   }
@@ -63,7 +67,7 @@ export class FeedbackService {
       this.feedbackRepository.update({ id }, updateFeedbackDto)
       return "update feedback - " + feed.id;
     } else {
-      throw new NotFoundException('feedback not found');
+      throw new NotFoundException('Oops! feedback not found');
     }
   }
 
@@ -73,7 +77,7 @@ export class FeedbackService {
       this.feedbackRepository.delete({ id })
       return "delete feedback - " + us.id;
     } else {
-      throw new NotFoundException('feedback not found');
+      throw new NotFoundException('Oops! feedback not found');
     }
   }
 }

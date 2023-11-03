@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException }  from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from 'src/jobs/entities/job.entity';
 import { Skill } from 'src/skills/entities/skill.entity';
@@ -20,11 +20,11 @@ export class JobSkillService {
   async create(createJobSkillDto: any) {
     const skill = await this.skillRepository.findOneBy({id:createJobSkillDto.skillId})
     if(!skill){
-      throw new NotFoundException('skills not found');
+      throw new NotFoundException('Oops! skills not found');
     }
     const job = await this.jobRepository.findOneBy({id:createJobSkillDto.jobId})
     if(!job){
-      throw new NotFoundException('job not found');
+      throw new NotFoundException('Oops! job not found');
     }
     const userskill = await this.jobSkillRepository.find({
       where: {
@@ -33,7 +33,7 @@ export class JobSkillService {
       },
     })
     if (userskill.length) {
-      throw new NotFoundException('job skills has already');
+      throw new NotFoundException('Oops! job skills has already');
     } else {
       await this.jobSkillRepository.save(createJobSkillDto)
       return 'adds a new job skill';
@@ -50,7 +50,7 @@ export class JobSkillService {
     if (jobSkill) {
       return jobSkill;
     } else {
-      throw new NotFoundException('job skills not found');
+      throw new NotFoundException('Oops! job skills not found');
     }
   }
 
@@ -60,7 +60,7 @@ export class JobSkillService {
       this.jobSkillRepository.delete({ id })
       return "delete job skill - " + jskill.id;
     } else {
-      throw new NotFoundException('job skills not found');
+      throw new NotFoundException('Oops! job skills not found');
     }
   }
 }

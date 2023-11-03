@@ -37,7 +37,7 @@ export class SkillsService {
       }
     })
     if (!skill) {
-      throw new NotFoundException("skill not fount")
+      throw new NotFoundException("Oops! skill not fount")
     } else {
       return skill
     }
@@ -53,7 +53,7 @@ export class SkillsService {
       await this.skillRepository.update({ id }, updateSkillDto);
       return 'Updated skill - ' + skill.name;
     } else {
-      return new NotFoundException('skill not found');
+      return new NotFoundException('Oops! skill not found');
     }
   }
 
@@ -63,7 +63,7 @@ export class SkillsService {
       this.skillRepository.delete({ id })
       return "delete skill - " + us.name;
     } else {
-      throw new NotFoundException('skill not found');
+      throw new NotFoundException('Oops! skill not found');
     }
   }
 }

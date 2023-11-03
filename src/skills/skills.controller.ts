@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Htt
 import { SkillsService } from './skills.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Role } from 'src/user/role/role.enum';
 import { HasRoles } from 'src/auth/has-roles.decorator';
@@ -18,6 +18,7 @@ export class SkillsController {
 
   @HttpCode(HttpStatus.OK)
   @HasRoles(Role.ADMIN)
+  @ApiResponse({ description:""})
   @Post()
   async create(@Body() createSkillDto: CreateSkillDto, @Res() res: Response, @Request() req) {
     try {
@@ -33,6 +34,7 @@ export class SkillsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get()
   async findAll(@Res() res: Response) {
     try {
@@ -44,6 +46,7 @@ export class SkillsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -55,6 +58,7 @@ export class SkillsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @HasRoles(Role.ADMIN)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto, @Res() res: Response, @Request() req) {
@@ -71,6 +75,7 @@ export class SkillsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @ApiBearerAuth('JWT-auth')
   @HasRoles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)

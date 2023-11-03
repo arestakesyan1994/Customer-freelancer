@@ -12,7 +12,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user/user.service';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger/dist/decorators/api-use-tags.decorator';
-import { ApiBearerAuth, ApiProperty } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiProperty, ApiResponse } from '@nestjs/swagger';
 import { CreateUserDto } from './user/dto/create-user.dto';
 
 export class Us {
@@ -32,6 +32,7 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
+  @ApiResponse({description:"հարկավոր է մուտքագրել username և password"})
   async login(@Body() us: Us,@Request() req) {
     console.log(us);    
     return this.authService.login(req.user);
@@ -39,6 +40,9 @@ export class AppController {
 
   @HttpCode(HttpStatus.OK)
   @Post("/register")
+  @ApiResponse({description:`profesion և salary դաշերը լրացնում ենք միյան այն դեպքում, երբ տվյալ մարդը գրանցվում է որպես freelancer։\n
+  Կարող ենք գրանցում որպես admin(role = 0), customer(role = 1) կամ freelancer(role = 2),\n
+   տվյալ էջում կա միայն մեկ admin, էջում գրանցվելիս մարդ ունի ընտրության 2 հնարավորություն customer կամ freelancer`})
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
       const data = await this.userSerevice.create(createUserDto);
@@ -51,6 +55,7 @@ export class AppController {
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
+  @ApiResponse({description:"վերադարձնում է login եղած մարդու տվյալները"})
   @Get('profile')
   async getProfile(@Request() req, @Res() res: Response) {
     try {
@@ -61,26 +66,6 @@ export class AppController {
         error: e.message
       })
     }
-  }
-
-  
-  @HttpCode(HttpStatus.OK)
-  @ApiBearerAuth('JWT-auth')
-  @HasRoles(Role.FREELANCER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('freelancer')
-  onlyFreelancer(@Request() req) {
-    return req.user;
-  }
-
-  
-  @HttpCode(HttpStatus.OK)
-  @ApiBearerAuth('JWT-auth')
-  @HasRoles(Role.CUSTOMER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('customer')
-  onlyCustomer(@Request() req) {
-    return req.user;
   }
 
 }

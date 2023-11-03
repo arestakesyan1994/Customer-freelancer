@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode,
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto, updateJobStatus } from './dto/update-job.dto';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { HasRoles } from 'src/auth/has-roles.decorator';
@@ -18,6 +18,7 @@ export class JobsController {
 
   @HttpCode(HttpStatus.OK)
   @HasRoles(Role.CUSTOMER)
+  @ApiResponse({ description:""})
   @Post()
   async create(@Body() createJobDto: CreateJobDto, @Res() res: Response, @Request() req) {
     try {
@@ -30,6 +31,7 @@ export class JobsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get()
   async findAll(@Res() res: Response) {
     try {
@@ -41,6 +43,7 @@ export class JobsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -50,7 +53,9 @@ export class JobsController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
   }
+
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get('findJobsByStatus/:status')
   async findJobsByStatus(@Param('status') status: string, @Res() res: Response) {
     try {
@@ -60,7 +65,9 @@ export class JobsController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
   }
+
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get('findJobsByFreelancerId/:id')
   async findJobsByFreelancerId(@Param('id') status: string, @Res() res: Response) {
     try {
@@ -70,7 +77,9 @@ export class JobsController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
   }
+ 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get('findJobsByCustomerId/:id')
   async findJobsByCustomerId(@Param('id') status: string, @Res() res: Response) {
     try {
@@ -82,6 +91,7 @@ export class JobsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @HasRoles(Role.CUSTOMER)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto, @Res() res: Response, @Request() req) {
@@ -94,6 +104,7 @@ export class JobsController {
     }
   }
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @HasRoles(Role.CUSTOMER)
   @Patch('updateJobStatus/:id')
   async updateJobStatus(@Param('id') id: string, @Body() updateJobDto: updateJobStatus, @Res() res: Response) {
@@ -106,6 +117,7 @@ export class JobsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @HasRoles(Role.CUSTOMER)
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {

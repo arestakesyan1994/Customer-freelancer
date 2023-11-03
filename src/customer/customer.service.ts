@@ -30,7 +30,8 @@ export class CustomerService {
         id
       },
       relations: {
-        user: true
+        user: true,
+        jobs:true
       }
     })
   }
@@ -41,7 +42,7 @@ export class CustomerService {
       this.customerRepository.delete({ id })
       return "delete customer - " + us.id;
     } else {
-      throw new NotFoundException('customer not found');
+      throw new NotFoundException('Oops! customer not found');
     }
   }
 }

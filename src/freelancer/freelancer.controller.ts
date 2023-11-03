@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, HttpStatus, Res, Query } from '@nestjs/common';
 import { FreelancerService } from './freelancer.service';
 import { UpdateFreelancerDto } from './dto/update-freelancer.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Response } from 'express';
@@ -14,6 +14,7 @@ export class FreelancerController {
   constructor(private readonly freelancerService: FreelancerService) { }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({description:"վերադարձնում է բոլոր այն մարդկանց տվյալները, ովքեր գրանցվել են որպես freelncer "})
   @Get()
   async findAll(@Res() res: Response) {
     try {
@@ -25,6 +26,7 @@ export class FreelancerController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({description:"վերադարձնում է freelncer-ի տվյալը ըստ իր id-ի"})
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -37,9 +39,8 @@ export class FreelancerController {
 
   @HttpCode(HttpStatus.OK)
   @Get("/findUserBySkillAndSalary")
+  @ApiResponse({description:"հնարավորություն է տալիս search իրականացնել ըստ skill-ի, minSalary կամ maxSalary, հնարավոր է նաև տվյալներից որևէ մեկը չլրացնել"})
   async findUserBySkillAndSalary(@Query("skill") skill: string, @Query("min-salary") minsalary: number, @Query("max-salary") maxsalary: number, @Res() res: Response) {
-    console.log({ skill, minsalary, maxsalary });
-
     try {
       const data = await this.freelancerService.findUserBySkillAndSalary({ skill, minsalary, maxsalary });
       return res.status(HttpStatus.OK).json(data)
@@ -51,6 +52,7 @@ export class FreelancerController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({description:"հնարավորություն է տալիս freelancer-ի տվյալներ թարմացնել-> salary, profesion"})
   @Patch(':id')
   async update(@Param('id') id: string, @Res() res: Response, @Body() updateFreelancerDto: UpdateFreelancerDto) {
     try {
@@ -62,6 +64,7 @@ export class FreelancerController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({description:"հնարավորություն է տալիս ջնջել customer-ի տվյալները"})
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     try {

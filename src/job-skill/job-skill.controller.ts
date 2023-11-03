@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode,
 import { JobSkillService } from './job-skill.service';
 import { CreateJobSkillDto } from './dto/create-job-skill.dto';
 import { UpdateJobSkillDto } from './dto/update-job-skill.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { HasRoles } from 'src/auth/has-roles.decorator';
@@ -17,6 +17,7 @@ export class JobSkillController {
   constructor(private readonly jobSkillService: JobSkillService) { }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @HasRoles(Role.CUSTOMER)
   @Post()
   async create(@Body() createJobSkillDto: CreateJobSkillDto, @Res() res: Response, @Request() req) {
@@ -31,6 +32,7 @@ export class JobSkillController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @Get(':id')
   async findSkillByJobId(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -44,6 +46,7 @@ export class JobSkillController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:""})
   @HasRoles(Role.CUSTOMER)
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {

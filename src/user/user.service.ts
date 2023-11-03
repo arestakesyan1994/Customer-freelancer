@@ -32,11 +32,11 @@ export class UserService {
     console.log(users);
 
     if (users.length) {
-      throw new UnauthorizedException("email has already")
+      throw new UnauthorizedException("Oops! email has already")
     } else if (createUserDto.role == Role.FREELANCER && !createUserDto.profesion) {
-      throw new UnauthorizedException("Freelancer must have profesion")
+      throw new UnauthorizedException("Oops! Freelancer must have profesion")
     } else if (createUserDto.role == Role.CUSTOMER && createUserDto.profesion) {
-      throw new UnauthorizedException("Customer already have profesion")
+      throw new UnauthorizedException("Oops! Customer already have profesion")
     }
     const { password, profesion, salary, ...body } = createUserDto
     const hash = await bcrypt.hash(password, 10)
@@ -88,7 +88,7 @@ export class UserService {
       await this.userRepository.update({ id: us.id }, { emailToken: null, isVerified: 1 })
       return "you are verified"
     } else {
-      throw new NotFoundException("data not found")
+      throw new NotFoundException("Oops! data not found")
     }
 
   }
@@ -104,7 +104,7 @@ export class UserService {
       }
     });
     if (!user) {
-      throw new UnauthorizedException("user not fount")
+      throw new UnauthorizedException("Oops! Oops! user not fount")
     } else {
       return user
     }
@@ -125,7 +125,7 @@ export class UserService {
       this.userRepository.update({ id }, updateUserDto)
       return "update user - " + us.name;
     } else {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('Oops! user not found');
     }
   }
 
@@ -135,7 +135,7 @@ export class UserService {
       this.userRepository.delete({ id })
       return "delete user - " + us.name;
     } else {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('Oops! user not found');
     }
   }
 }
