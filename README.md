@@ -1,2 +1,2 @@
-# customer-freelancer
+# Customer-Freelancer
 Nest.js , Passport.js, Email Verification, TypeORM
