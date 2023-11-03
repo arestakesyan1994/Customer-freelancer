@@ -23,9 +23,6 @@ export class Freelancer{
     salary: number
 
     @Column()
-    rating: number
-
-    @Column()
     profesion: string
 
     @OneToMany(type => UserSkill, usSkill => usSkill.freelancer)

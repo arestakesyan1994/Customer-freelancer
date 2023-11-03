@@ -11,6 +11,9 @@ export class Customer {
     @Column()
     userId:number
 
+    @Column()
+    description:string
+
     @ManyToOne(type => User, user =>user.customer, {
         onUpdate: "CASCADE",
         onDelete: "CASCADE"

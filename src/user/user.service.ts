@@ -38,14 +38,14 @@ export class UserService {
     } else if (createUserDto.role == Role.CUSTOMER && createUserDto.profesion) {
       throw new UnauthorizedException("Oops! Customer already have profesion")
     }
-    const { password, profesion, salary, ...body } = createUserDto
+    const { password, profesion, description,  salary, ...body } = createUserDto
     const hash = await bcrypt.hash(password, 10)
     const emailToken = uuidv4();
     const user = this.userRepository.create({ ...body, password: hash, isVerified: 0, emailToken });
     const us = await this.userRepository.save(user);
 
     if(us.role == Role.CUSTOMER){
-      await this.customerService.create({userId:us.id})
+      await this.customerService.create({userId:us.id, description})
     }else if(us.role == Role.FREELANCER){
       await this.freelancerService.create({
         userId:us.id,

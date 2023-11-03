@@ -14,9 +14,6 @@ export class JobUser {
     @Column("int")
     jobId: number
 
-    @Column({ default: 0 })
-    done: number
-
     @ManyToOne(type => Freelancer, freelancer => freelancer.applay, {
         onUpdate: "CASCADE",
         onDelete: "CASCADE"

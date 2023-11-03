@@ -31,6 +31,12 @@ export class Job {
 
     @Column({ default: 0 })
     status: StatusEnum
+    
+    @Column({default: 0 })
+    rate: number
+
+    @Column()
+    text: string
 
     @ManyToOne(type => Customer, customer =>customer.jobs, {
         onUpdate: "CASCADE",

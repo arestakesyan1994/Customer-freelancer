@@ -61,20 +61,6 @@ export class JobUserController {
 
   @ApiResponse({ description:""})
   @HttpCode(HttpStatus.OK)
-  @Patch('findByUserId/:id')
-  async updateJobStatus(@Param('id') id: string, @Body() num:UpdateDone, @Res() res: Response) {
-    try {
-      const data = await this.jobUserService.updateJobStatus(+id, num);
-      return res.status(HttpStatus.OK).json(data)
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        error: e.message
-      })
-    }
-  }
-
-  @ApiResponse({ description:""})
-  @HttpCode(HttpStatus.OK)
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     try {

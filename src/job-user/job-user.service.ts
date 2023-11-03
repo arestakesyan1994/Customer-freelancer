@@ -70,28 +70,6 @@ export class JobUserService {
     }
   }
 
-  async updateJobStatus(id: number,{num} : {num:number}) {
-    const job = await this.jobUserRepository.findOne({
-      where: {
-        id: id
-      }
-    })
-    if (job) {
-      if(num==0 || num==1){
-        await this.jobUserRepository.update({ id }, {done:num});
-        if(num==1){
-          await this.jobUserRepository.delete({jobId:job.jobId})
-          
-        }
-        return `Updated job - ${job.id}`;
-      }else{
-        throw new NotFoundException('Oops! done value invalid');
-      }
-    } else {
-      throw new NotFoundException('Oops! jobUser not found');
-    }
-  }
-
   async remove(id: number) {
     const job = await this.jobUserRepository.findOneBy({ id });
     if (job) {

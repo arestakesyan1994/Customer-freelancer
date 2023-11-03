@@ -15,4 +15,6 @@ export class CreateUserDto {
     role:number
     @ApiProperty()
     salary:number
+    @ApiProperty()
+    description:string
 }

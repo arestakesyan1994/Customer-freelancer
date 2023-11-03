@@ -40,7 +40,8 @@ export class AppController {
 
   @HttpCode(HttpStatus.OK)
   @Post("/register")
-  @ApiResponse({description:`profesion և salary դաշերը լրացնում ենք միյան այն դեպքում, երբ տվյալ մարդը գրանցվում է որպես freelancer։\n
+  @ApiResponse({description:`profesion և salary դաշտերը լրացնում ենք միյան այն դեպքում, երբ տվյալ մարդը գրանցվում է որպես freelancer։\n
+  description դաշտը լրացնում ենք միյան այն դեպքում, երբ տվյալ մարդը գրանցվում է որպես customer\n
   Կարող ենք գրանցում որպես admin(role = 0), customer(role = 1) կամ freelancer(role = 2),\n
    տվյալ էջում կա միայն մեկ admin, էջում գրանցվելիս մարդ ունի ընտրության 2 հնարավորություն customer կամ freelancer`})
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
