@@ -1,9 +1,18 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateJobDto } from './create-job.dto';
 
-export class UpdateJobDto extends PartialType(CreateJobDto) {}
+export class UpdateJobDto {
+    @ApiProperty()
+    title: string
 
-export class updateJobStatus {
+    @ApiProperty()
+    description: string
+
+    @ApiProperty()
+    price: number
+}
+
+export class UpdateJobStatus {
     @ApiProperty()
     num:number
 }

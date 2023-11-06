@@ -1,5 +1,4 @@
 import { Customer } from 'src/customer/entities/customer.entity';
-import { Feedback } from 'src/feedback/entities/feedback.entity';
 import { Freelancer } from 'src/freelancer/entities/freelancer.entity';
 import { JobSkill } from 'src/job-skill/entities/job-skill.entity';
 import { JobUser } from 'src/job-user/entities/job-user.entity';
@@ -32,7 +31,7 @@ export class Job {
     @Column({ default: 0 })
     status: StatusEnum
     
-    @Column({default: 0 })
+    @Column({default: null, nullable:true })
     rate: number
 
     @Column()
@@ -52,7 +51,5 @@ export class Job {
     
     @OneToMany(type => JobUser, job => job.job)
     jobUsers: JobUser[]
-    
-    @OneToMany(type => Feedback, feed => feed.job)
-    feedback: Feedback
+
 }

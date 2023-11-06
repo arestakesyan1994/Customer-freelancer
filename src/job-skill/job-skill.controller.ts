@@ -17,13 +17,19 @@ export class JobSkillController {
   constructor(private readonly jobSkillService: JobSkillService) { }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description: "customer-ին հնարավորություն է տալիս գոյություն ունեցող job-ին նոր skill ավելացնել" })
   @HasRoles(Role.CUSTOMER)
   @Post()
   async create(@Body() createJobSkillDto: CreateJobSkillDto, @Res() res: Response, @Request() req) {
     try {
-      const data = await this.jobSkillService.create({ ...createJobSkillDto, userId: req.user.userId });
-      return res.status(HttpStatus.OK).json(data)
+      if (req.user.role == 1) {
+        const data = await this.jobSkillService.create({ ...createJobSkillDto, userId: req.user.userId });
+        return res.status(HttpStatus.OK).json(data)
+      } else {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          error: 'Oops! you do not have access'
+        })
+      }
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
@@ -31,28 +37,34 @@ export class JobSkillController {
     }
   }
 
-  @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
-  @Get(':id')
-  async findSkillByJobId(@Param('id') id: string, @Res() res: Response) {
-    try {
-      const data = await this.jobSkillService.findSkillByJobId(+id);
-      return res.status(HttpStatus.OK).json(data)
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        error: e.message
-      })
-    }
-  }
+  // @HttpCode(HttpStatus.OK)
+  // @ApiResponse({ description:""})
+  // @Get(':id')
+  // async findSkillByJobId(@Param('id') id: string, @Res() res: Response) {
+  //   try {
+  //     const data = await this.jobSkillService.findSkillByJobId(+id);
+  //     return res.status(HttpStatus.OK).json(data)
+  //   } catch (e) {
+  //     return res.status(HttpStatus.BAD_REQUEST).json({
+  //       error: e.message
+  //     })
+  //   }
+  // }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description: "customer-ին հնարավորություն է տալիս  գոյություն ունեցող job-ից ջնջել skills" })
   @HasRoles(Role.CUSTOMER)
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: Response) {
+  async remove(@Param('id') id: string, @Res() res: Response, @Request() req) {
     try {
-      const data = await this.jobSkillService.remove(+id);
-      return res.status(HttpStatus.OK).json(data)
+      if (req.user.role == 1) {
+        const data = await this.jobSkillService.remove({id:+id, userId: req.user.userId });
+        return res.status(HttpStatus.OK).json(data)
+      } else {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          error: 'Oops! you do not have access'
+        })
+      }
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message

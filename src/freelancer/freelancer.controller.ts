@@ -38,9 +38,10 @@ export class FreelancerController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get("/findUserBySkillAndSalary")
-  @ApiResponse({description:"հնարավորություն է տալիս search իրականացնել ըստ skill-ի, minSalary կամ maxSalary, հնարավոր է նաև տվյալներից որևէ մեկը չլրացնել"})
-  async findUserBySkillAndSalary(@Query("skill") skill: string, @Query("min-salary") minsalary: number, @Query("max-salary") maxsalary: number, @Res() res: Response) {
+  @ApiResponse({description:"հնարավորություն է տալիս search իրականացնել ըստ skill-ի, minSalary կամ maxSalary,\n հնարավոր է նաև տվյալները չլրացնել"})
+  @Get("find/freelancerBySkillAndSalary")
+  async findUserBySkillAndSalary(@Query("skills") skill: string, @Query("min-salary") minsalary: number, @Query("max-salary") maxsalary: number, @Res() res: Response) {
+    console.log(':hi');    
     try {
       const data = await this.freelancerService.findUserBySkillAndSalary({ skill, minsalary, maxsalary });
       return res.status(HttpStatus.OK).json(data)

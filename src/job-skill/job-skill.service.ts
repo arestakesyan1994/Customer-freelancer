@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException }  from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from 'src/jobs/entities/job.entity';
 import { Skill } from 'src/skills/entities/skill.entity';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateJobSkillDto } from './dto/create-job-skill.dto';
 import { UpdateJobSkillDto } from './dto/update-job-skill.dto';
@@ -14,28 +15,36 @@ export class JobSkillService {
     @InjectRepository(JobSkill) private jobSkillRepository: Repository<JobSkill>,
     @InjectRepository(Skill) private skillRepository: Repository<Skill>,
     @InjectRepository(Job) private jobRepository: Repository<Job>,
+    @InjectRepository(User) private userRepository: Repository<User>,
 
   ) { }
 
-  async create(createJobSkillDto: any) {
-    const skill = await this.skillRepository.findOneBy({id:createJobSkillDto.skillId})
-    if(!skill){
+  async create({ userId, jobId, skillId }: any) {
+    const skill = await this.skillRepository.findOneBy({ id: skillId })
+    if (!skill) {
       throw new NotFoundException('Oops! skills not found');
     }
-    const job = await this.jobRepository.findOneBy({id:createJobSkillDto.jobId})
-    if(!job){
+    const job = await this.jobRepository.findOneBy({ id: jobId })
+    if (!job) {
       throw new NotFoundException('Oops! job not found');
+    }
+    const user = await this.userRepository.findOne({ where: { id: userId }, relations: { freelancer: true } })
+    if (!user) {
+      throw new NotFoundException('Oops! user not found');
+    }
+    if (user.freelancer[0].id != userId) {
+      throw new NotFoundException('Oops! you do not have access');
     }
     const userskill = await this.jobSkillRepository.find({
       where: {
-        skillId: createJobSkillDto.skillId,
-        jobId:createJobSkillDto.jobId
+        skillId: skillId,
+        jobId: jobId
       },
     })
     if (userskill.length) {
       throw new NotFoundException('Oops! job skills has already');
     } else {
-      await this.jobSkillRepository.save(createJobSkillDto)
+      await this.jobSkillRepository.save({ jobId, skillId })
       return 'adds a new job skill';
     }
   }
@@ -54,13 +63,21 @@ export class JobSkillService {
     }
   }
 
-  async remove(id: number) {
-    const jskill = await this.jobSkillRepository.findOneBy({ id });
-    if (jskill) {
-      this.jobSkillRepository.delete({ id })
-      return "delete job skill - " + jskill.id;
+  async remove({ id, userId }: { id: number, userId: number }) {
+    const user = await this.userRepository.findOne({ where: { id: userId }, relations: { freelancer: true } })
+    if (!user) {
+      throw new NotFoundException('Oops! user not found');
+    }
+    if (user.freelancer[0].id != userId) {
+      throw new NotFoundException('Oops! you do not have access');
     } else {
-      throw new NotFoundException('Oops! job skills not found');
+      const jskill = await this.jobSkillRepository.findOneBy({ id });
+      if (jskill) {
+        this.jobSkillRepository.delete({ id })
+        return "delete job skill - " + jskill.id;
+      } else {
+        throw new NotFoundException('Oops! job skills not found');
+      }
     }
   }
 }

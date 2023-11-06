@@ -17,7 +17,6 @@ import { JobSkillModule } from './job-skill/job-skill.module';
 import { Job } from './jobs/entities/job.entity';
 import { JobSkill } from './job-skill/entities/job-skill.entity';
 import { JobUser } from './job-user/entities/job-user.entity';
-import { Feedback } from './feedback/entities/feedback.entity';
 import { CustomerModule } from './customer/customer.module';
 import { FreelancerModule } from './freelancer/freelancer.module';
 import { Customer } from './customer/entities/customer.entity';
@@ -33,7 +32,7 @@ import { Freelancer } from './freelancer/entities/freelancer.entity';
       username: 'root',
       password: '',
       database: 'test',
-      entities: [User,   Skill, UserSkill, Job, JobSkill, JobUser,  Feedback, Customer, Freelancer],
+      entities: [User,   Skill, UserSkill, Job, JobSkill, JobUser,   Customer, Freelancer],
       synchronize: true,
     }),
 

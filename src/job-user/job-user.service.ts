@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from 'src/jobs/entities/job.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Role } from 'src/user/role/role.enum';
 import { Not, Repository } from 'typeorm';
 import { CreateJobUserDto } from './dto/create-job-user.dto';
 import { JobUser } from './entities/job-user.entity';
@@ -16,7 +17,9 @@ export class JobUserService {
   ) { }
 
   async create(createJobUserDto: any) {
-    const user = await this.userRepository.findOneBy({ id: createJobUserDto.userId })
+    const user = await this.userRepository.findOne({ where:{id: createJobUserDto.userId}, relations:{freelancer:true} })
+    console.log(user);
+    
     if (!user) {
       throw new NotFoundException('Oops! user not found');
     }
@@ -24,28 +27,30 @@ export class JobUserService {
     if (!job) {
       throw new NotFoundException('Oops! job not found');
     }
-    const userjob = await this.jobUserRepository.findOne({
-      where: {
-        freelancerId: createJobUserDto.userId,
-        jobId: createJobUserDto.jobId
-      },
-    })
-    if (userjob) {
-      throw new NotFoundException('Oops! jobUser has already');
+    if (user.role == Role.FREELANCER) {
+      const userjob = await this.jobUserRepository.findOne({
+        where: {
+          freelancerId: user.freelancer[0].id,
+          jobId: createJobUserDto.jobId
+        },
+      })
+      if (userjob) {
+        throw new NotFoundException('Oops! jobUser has already');
+      } else {
+        await this.jobUserRepository.save({jobId:createJobUserDto.jobId, freelancerId:user.freelancer[0].id})
+        return 'adds a new jobUser';
+      }
     } else {
-      await this.jobUserRepository.save(createJobUserDto)
-      return 'adds a new jobUser';
+      throw new BadRequestException("Ooops! you do not have access")
     }
   }
 
   async findByJobId(id: number) {
     const job = await this.jobUserRepository.find({
       where: {
-        jobId:id
+        jobId: id
       },
-      relations: {
-        freelancer: true
-      }
+      relations: ["freelancer", "freelancer.user"]
     })
     if (!job) {
       throw new NotFoundException("Oops! job not fount")
@@ -57,11 +62,9 @@ export class JobUserService {
   async findByUserId(id: number) {
     const job = await this.jobUserRepository.find({
       where: {
-        freelancerId:id
+        freelancerId: id
       },
-      relations: {
-        job: true
-      }
+      relations:['job']
     })
     if (!job) {
       throw new NotFoundException("Oops! job not fount")

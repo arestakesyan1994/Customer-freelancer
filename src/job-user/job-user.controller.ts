@@ -17,7 +17,7 @@ export class JobUserController {
   constructor(private readonly jobUserService: JobUserService) { }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"freelancer-ին հնարավորություն է տալիս աշխատանքի համար հայտ ուղարկել"})
   @HasRoles(Role.FREELANCER)
   @Post()
   async create(@Body() createJobUserDto: CreateJobUserDto, @Res() res: Response, @Request() req) {
@@ -31,8 +31,8 @@ export class JobUserController {
     }
   }
 
-  @ApiResponse({ description:""})
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:"հնարավորություն է տալիս ըստ jobId-ի տեսնել բոլոր freelancer-ների"})
   @Get('findByJobId/:id')
   async findByJobId(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -45,8 +45,8 @@ export class JobUserController {
     }
   }
 
-  @ApiResponse({ description:""})
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:"հնարավորություն է տալիս ըստ freelancerId-ի տեսնել բոլոր job-ների"})
   @Get('findByUserId/:id')
   async findByUserId(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -59,10 +59,10 @@ export class JobUserController {
     }
   }
 
-  @ApiResponse({ description:""})
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:"հնարավորություն է տալիս ջնջել freelancer-ի ուղարկած հայտը "})
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: Response) {
+  async remove(@Param('id') id: string, @Res() res: Response, @Request() req) {
     try {
       const data = await this.jobUserService.remove(+id);
       return res.status(HttpStatus.OK).json(data)

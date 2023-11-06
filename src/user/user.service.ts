@@ -55,16 +55,16 @@ export class UserService {
     }
 
     const url = `http://localhost:3000/verify?email=${body.email}&emailToken=${emailToken}`;
-    // await this.mailerService.sendMail({
-    //   to: body.email,
-    //   from: '...',
-    //   subject: 'Welcome to CustomerFreelancer page! Confirm your Email',
-    //   html: `Hi! There, You have recently visited 
-    //   our website and entered your email.
-    //   Please follow the given link to verify your email
-    //   <a href='${url}'>click</a>       
-    //   Thanks`
-    // });
+    await this.mailerService.sendMail({
+      to: body.email,
+      from: '...',
+      subject: 'Welcome to CustomerFreelancer page! Confirm your Email',
+      html: `Hi! There, You have recently visited 
+      our website and entered your email.
+      Please follow the given link to verify your email
+      <a href='${url}'>click</a>       
+      Thanks`
+    });
     return "add user"
   }
 
@@ -104,7 +104,7 @@ export class UserService {
       }
     });
     if (!user) {
-      throw new UnauthorizedException("Oops! Oops! user not fount")
+      throw new UnauthorizedException("Oops!  user not fount")
     } else {
       return user
     }

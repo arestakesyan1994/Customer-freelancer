@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Freelancer } from 'src/freelancer/entities/freelancer.entity';
 import { JobSkillService } from 'src/job-skill/job-skill.service';
+import { JobUser } from 'src/job-user/entities/job-user.entity';
 import { UserSkillsService } from 'src/user-skills/user-skills.service';
 import { Repository } from 'typeorm';
 import { CreateJobDto } from './dto/create-job.dto';
@@ -12,6 +14,8 @@ import { StatusEnum } from './status/status.enum';
 export class JobsService {
   constructor(
     @InjectRepository(Job) private jobRepository: Repository<Job>,
+    @InjectRepository(Freelancer) private freelancerRepository: Repository<Freelancer>,
+    @InjectRepository(JobUser) private jobUserRepository: Repository<JobUser>,
     private readonly jobSkillsService: JobSkillService,
   ) { }
 
@@ -119,7 +123,28 @@ export class JobsService {
       throw new NotFoundException('Oops! job not found');
     }
   }
+  async saveFreelancer({jobId, freelancerId}:{jobId:number, freelancerId:number}){
+    const job = await this.jobRepository.findOne({
+      where: {
+        id: jobId
+      }
+    })
+    if(!job){
+      throw new NotFoundException('Oops! job not found');
+    }
+    const freelancer = await this.freelancerRepository.findOne({
+      where: {
+        id: freelancerId
+      }
+    })
+    if(!freelancer){
+      throw new NotFoundException('Oops! freelancer not found');
+    }
+    await this.jobRepository.update({id:jobId}, {freelancerId})
+    await this.jobUserRepository.delete({jobId})
+    return "update freelancer id"
 
+  }
   async remove(id: number) {
     const job = await this.jobRepository.findOneBy({ id });
     if (job) {

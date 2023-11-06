@@ -18,33 +18,21 @@ export class FreelancerService {
 
   async findAll() {
     return this.freelancerRepository.find({
-      relations:{
-        user:true
+      relations: {
+        user: true
       }
     });
   }
 
   async findOne(id: number) {
 
-    return await  this.freelancerRepository
-    .createQueryBuilder('freelancer')  
-    .where('freelancer.id = :id', { id })
-    .leftJoinAndSelect('freelancer.jobs', 'job')
-    .leftJoinAndSelect('job.feedback', 'feedback')
-    // .select("AVG(feedback.rate)", "freelancer.rating")
-    // .addSelect('AVG(feedback.rate)', 'temp_stars')      //please note the aliasing here
-    // .leftJoinAndSelect('temp.category', 'category')
-    .getOne();
-
-
-    // return await this.freelancerRepository.findOne({
-    //   where: {
-    //     id
-    //   },
-    //   relations: {
-    //     user:true
-    //   }
-    // }) 
+    const user =  await this.freelancerRepository
+      .createQueryBuilder('freelancer')
+      .where('freelancer.id = :id', { id })
+      .leftJoinAndSelect('freelancer.jobs', 'job')
+      .getOne();
+      const avg = user.jobs.filter(elm=>elm.rate).reduce((a, b)=>a+b.rate, 0)/user.jobs.filter(elm=>elm.rate).length
+      return {...user, avg}
   }
 
   async findUserBySkillAndSalary({ skill, minsalary, maxsalary }: { skill: string, minsalary: number, maxsalary: number }) {
@@ -60,23 +48,27 @@ export class FreelancerService {
         maxsalary = q[0].salary
       }
     }
+    console.log(minsalary, maxsalary, skill);
+    
     let freelancer = undefined;
     if (skill && skill != ' ') {
       freelancer = await this.freelancerRepository
         .createQueryBuilder('freelancer')
+        .innerJoinAndSelect('freelancer.user', "user")
         .where('freelancer.salary >= :minsalary', { minsalary })
         .andWhere('freelancer.salary <= :maxsalary', { maxsalary })
-        .leftJoinAndSelect("freelancer.skills", "freelancer_skill")
-        .leftJoinAndSelect("freelancer_skill.skill", "skill")
+        .leftJoinAndSelect("freelancer.skills", "user_skill")
+        .leftJoinAndSelect("user_skill.skill", "skill")
         .andWhere("skill.name = :skill", { skill })
         .getMany()
     } else {
       freelancer = await this.freelancerRepository
         .createQueryBuilder('freelancer')
+        .innerJoinAndSelect('freelancer.user', "user")
         .where('freelancer.salary >= :minsalary', { minsalary })
         .andWhere('freelancer.salary <= :maxsalary', { maxsalary })
-        .leftJoinAndSelect("freelancer.skills", "freelancer_skill")
-        .leftJoinAndSelect("freelancer_skill.skill", "skill")
+        .leftJoinAndSelect("freelancer.skills", "user_skill")
+        .leftJoinAndSelect("user_skill.skill", "skill")
         .getMany()
     }
 
@@ -104,5 +96,6 @@ export class FreelancerService {
       return "delete freelancer - " + us.id;
     } else {
       throw new NotFoundException('Oops! freelancer not found');
-    }  }
+    }
+  }
 }
