@@ -22,7 +22,7 @@ export class UserSkill {
     })
     freelancer: Freelancer
 
-    @ManyToOne(type => Skill, skill =>skill.skills, {
+    @ManyToOne(type => Skill, skill =>skill.freelancer, {
         onUpdate: "CASCADE",
         onDelete: "CASCADE"
     })

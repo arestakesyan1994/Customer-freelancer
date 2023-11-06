@@ -18,7 +18,7 @@ export class SkillsController {
 
   @HttpCode(HttpStatus.OK)
   @HasRoles(Role.ADMIN)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"admin-ին հնարավորություն է տալիս ավելացնել նոր skills,\n եթե տվյալ skills արդեն իսկ գոյություն ունի, ապա այն չի ավելացնում"})
   @Post()
   async create(@Body() createSkillDto: CreateSkillDto, @Res() res: Response, @Request() req) {
     try {
@@ -26,7 +26,7 @@ export class SkillsController {
         const data = await this.skillsService.create(createSkillDto);
         return res.status(HttpStatus.OK).json(data);
       } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'you do not have access' })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access" })
       }
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
@@ -34,7 +34,7 @@ export class SkillsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"ցույց է տալիս բոլոր skill-երը"})
   @Get()
   async findAll(@Res() res: Response) {
     try {
@@ -46,7 +46,7 @@ export class SkillsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"ցույց է տալիս տվյալ skill-ը և բոլոր այն freelancer-ներին, ովքեր տիրապետում են այդ skill-ին"})
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -56,9 +56,20 @@ export class SkillsController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
   }
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description:"ցույց է տալիս տվյալ skill-ը և բոլոր այն freelancer-ներին, ովքեր տիրապետում են այդ skill-ին"})
+  @Get('findJobBySkillId/:id')
+  async findJobBySkillId(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const data = await this.skillsService.findJobBySkillId(+id);
+      return res.status(HttpStatus.OK).json(data);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
+    }
+  }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"admin-ին հնարավորություն է տալիս թարմացնել skills-ի name-ը"})
   @HasRoles(Role.ADMIN)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto, @Res() res: Response, @Request() req) {
@@ -67,7 +78,7 @@ export class SkillsController {
         const data = await this.skillsService.update(+id, updateSkillDto);
         return res.status(HttpStatus.OK).json(data);
       } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'you do not have access' })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access" })
       }
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
@@ -75,7 +86,7 @@ export class SkillsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"admin-ին հնարավորություն է տալիս ջնջել skill"})
   @ApiBearerAuth('JWT-auth')
   @HasRoles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -86,7 +97,7 @@ export class SkillsController {
         const data = await this.skillsService.remove(+id);
         return res.status(HttpStatus.OK).json(data);
       } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'you do not have access' })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access" })
       }
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })

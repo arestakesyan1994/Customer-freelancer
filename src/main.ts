@@ -7,7 +7,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Customer_Freelancer')
-    .setDescription('The customer and freelancer API description')
+    .setDescription(`Այստեղ user-ի համար ունենք 3 role -> ADMIN(0), CUSTOMER(1), FREELANCER(2)
+    \n\n ինչպես նաև job-ի համար ունենք 3 status -> START(0), PROCESS(1), FINISHED(2)
+    `)
     .setVersion('')
     .addBearerAuth(
       {

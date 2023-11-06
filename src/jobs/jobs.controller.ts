@@ -18,7 +18,7 @@ export class JobsController {
 
   @HttpCode(HttpStatus.OK)
   @HasRoles(Role.CUSTOMER)
-  @ApiResponse({ description: "" })
+  @ApiResponse({ description: "customer—ին հնարավորություն է տալիս նոր job ավելացնել, որտեղ skills-ը փոխանցում է որպես number[ ]" })
   @Post()
   async create(@Body() createJobDto: CreateJobDto, @Res() res: Response, @Request() req) {
     try {
@@ -103,7 +103,7 @@ export class JobsController {
         const data = await this.jobsService.update(+id, updateJobDto);
         return res.status(HttpStatus.OK).json(data);
       } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Oops! you do not have access' })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access" })
 
       }
     } catch (e) {
@@ -120,7 +120,7 @@ export class JobsController {
         const data = await this.jobsService.updateJobStatus(+id, updateJobDto);
         return res.status(HttpStatus.OK).json(data);
       } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Oops! you do not have access' })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error:"Oops! you don't have any access" })
 
       }
     } catch (e) {
@@ -137,7 +137,7 @@ export class JobsController {
         const data = await this.jobsService.saveFreelancer({ jobId, freelancerId });
         return res.status(HttpStatus.OK).json(data);
       } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Oops! you do not have access' })
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access" })
       }
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
@@ -154,10 +154,8 @@ export class JobsController {
         const data = await this.jobsService.remove(+id);
         return res.status(HttpStatus.OK).json(data);
       } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Oops! you do not have access' })
-
-
-        }
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access"})
+      }
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }

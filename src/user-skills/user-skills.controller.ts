@@ -17,7 +17,7 @@ export class UserSkillsController {
   constructor(private readonly userSkillsService: UserSkillsService) { }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"freelancer—ին հնարավորություն է տալիս նոր skills ավելացնել"})
   @HasRoles(Role.FREELANCER)
   @Post()
   async create(@Body() createUserSkillDto: CreateUserSkillDto, @Res() res: Response, @Request() req) {
@@ -33,7 +33,7 @@ export class UserSkillsController {
 
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"ցույց է տալիս տվյալ freelancer-ի skills"})
   @Get(":userId")
   async findSkillByFreelacerId(@Param("userId") id: number, @Res() res: Response) {
     try {
@@ -48,7 +48,7 @@ export class UserSkillsController {
 
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description:""})
+  @ApiResponse({ description:"freelancer—ին հնարավորություն է տալիս skills ջնջել"})
   @HasRoles(Role.FREELANCER)
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {

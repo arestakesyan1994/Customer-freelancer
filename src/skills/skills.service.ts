@@ -32,12 +32,23 @@ export class SkillsService {
       where: {
         id: id
       },
-      relations: {
-        skills:true
-      }
+      relations: ["freelancer", "freelancer.freelancer"]
     })
     if (!skill) {
-      throw new NotFoundException("Oops! skill not fount")
+      throw new NotFoundException("Oops! skills not fount")
+    } else {
+      return skill
+    }
+  }
+  async findJobBySkillId(id: number) {
+    const skill = await this.skillRepository.findOne({
+      where: {
+        id: id
+      },
+      relations: ["jobs", "jobs.job"]
+    })
+    if (!skill) {
+      throw new NotFoundException("Oops! skills  not fount")
     } else {
       return skill
     }
