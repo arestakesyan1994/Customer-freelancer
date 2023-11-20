@@ -17,27 +17,35 @@ export class UserSkillsService {
   ) { }
 
   async create(createUserSkillDto: any) {
+    console.log(createUserSkillDto);
+
     const skill = await this.skillRepository.findOneBy({ id: createUserSkillDto.skillId })
     if (!skill) {
       throw new NotFoundException('Oops! skills not found');
     }
-    const user = await this.userRepository.findOneBy({ id: createUserSkillDto.userId })
+    const user = await this.userRepository.findOneBy({ id: createUserSkillDto.freelancerId })
     if (!user) {
       throw new NotFoundException('Oops! user not found');
     }
     if (user.role != 2) {
       throw new NotFoundException('Oops! you do not have access');
     }
+
+    const us = await this.userRepository.findOne({ where: { id: createUserSkillDto.freelancerId }, relations: { freelancer: true } })
+
     const userskill = await this.userSkillRepository.find({
       where: {
         skillId: createUserSkillDto.skillId,
-        freelancerId: createUserSkillDto.userId
+        freelancerId: us.freelancer[0].id
       },
     })
     if (userskill.length) {
       throw new NotFoundException('Oops! user skills has already');
     }
-    await this.userSkillRepository.save(createUserSkillDto)
+    await this.userSkillRepository.save({
+      skillId: createUserSkillDto.skillId,
+      freelancerId: us.freelancer[0].id
+    })
     return 'adds a new user skill';
 
   }

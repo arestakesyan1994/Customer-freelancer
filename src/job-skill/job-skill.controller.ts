@@ -22,7 +22,7 @@ export class JobSkillController {
   @Post()
   async create(@Body() createJobSkillDto: CreateJobSkillDto, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == 1) {
+      if (req.user.roles == 1) {
         const data = await this.jobSkillService.create({ ...createJobSkillDto, userId: req.user.userId });
         return res.status(HttpStatus.OK).json(data)
       } else {
@@ -57,7 +57,7 @@ export class JobSkillController {
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == 1) {
+      if (req.user.roles == 1) {
         const data = await this.jobSkillService.remove({id:+id, userId: req.user.userId });
         return res.status(HttpStatus.OK).json(data)
       } else {

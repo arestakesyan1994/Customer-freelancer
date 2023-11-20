@@ -90,7 +90,6 @@ export class UserService {
     } else {
       throw new NotFoundException("Oops! data not found")
     }
-
   }
 
   async findOne(username: string) {

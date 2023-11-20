@@ -22,7 +22,7 @@ export class JobsController {
   @Post()
   async create(@Body() createJobDto: CreateJobDto, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == Role.CUSTOMER) {
+      if (req.user.roles == Role.CUSTOMER) {
         const data = await this.jobsService.create({ ...createJobDto, customerId: req.user.customer[0].id });
         return res.status(HttpStatus.OK).json(data);
       } else {
@@ -99,7 +99,7 @@ export class JobsController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == Role.CUSTOMER) {
+      if (req.user.roles == Role.CUSTOMER) {
         const data = await this.jobsService.update(+id, updateJobDto);
         return res.status(HttpStatus.OK).json(data);
       } else {
@@ -116,7 +116,7 @@ export class JobsController {
   @Patch('updateJobStatus/:id')
   async updateJobStatus(@Param('id') id: string, @Body() updateJobDto: UpdateJobStatus, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == Role.CUSTOMER) {
+      if (req.user.roles == Role.CUSTOMER) {
         const data = await this.jobsService.updateJobStatus(+id, updateJobDto);
         return res.status(HttpStatus.OK).json(data);
       } else {
@@ -133,7 +133,7 @@ export class JobsController {
   @Patch('saveFreelancer/:jobId/:freelancerId')
   async saveFreelancer(@Param('jobId') jobId: number, @Param('freelancerId') freelancerId: number, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == Role.CUSTOMER) {
+      if (req.user.roles == Role.CUSTOMER) {
         const data = await this.jobsService.saveFreelancer({ jobId, freelancerId });
         return res.status(HttpStatus.OK).json(data);
       } else {
@@ -150,7 +150,7 @@ export class JobsController {
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == Role.CUSTOMER) {
+      if (req.user.roles == Role.CUSTOMER) {
         const data = await this.jobsService.remove(+id);
         return res.status(HttpStatus.OK).json(data);
       } else {
