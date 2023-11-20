@@ -32,7 +32,7 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  @ApiResponse({description:"հարկավոր է մուտքագրել username և password"})
+  @ApiResponse({description:"հարկավոր է մուտքագրել username և password, որպես պատասխան ստանում ենք access_token"})
   async login(@Body() us: Us,@Request() req) {
     console.log(us);    
     return this.authService.login(req.user);
