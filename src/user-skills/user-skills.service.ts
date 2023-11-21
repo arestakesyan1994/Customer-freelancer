@@ -30,9 +30,7 @@ export class UserSkillsService {
     if (user.role != 2) {
       throw new NotFoundException('Oops! you do not have access');
     }
-
     const us = await this.userRepository.findOne({ where: { id: createUserSkillDto.freelancerId }, relations: { freelancer: true } })
-
     const userskill = await this.userSkillRepository.find({
       where: {
         skillId: createUserSkillDto.skillId,

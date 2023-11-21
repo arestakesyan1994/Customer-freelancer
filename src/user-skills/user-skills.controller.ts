@@ -34,8 +34,8 @@ export class UserSkillsController {
 
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ description:"ցույց է տալիս տվյալ freelancer-ի skills"})
-  @Get(":userId")
-  async findSkillByFreelacerId(@Param("userId") id: number, @Res() res: Response) {
+  @Get(":freelancerId")
+  async findSkillByFreelacerId(@Param("freelancerId") id: number, @Res() res: Response) {
     try {
       const data = await this.userSkillsService.findSkillByFreelacerId(id);
       return res.status(HttpStatus.OK).json(data)

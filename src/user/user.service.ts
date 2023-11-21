@@ -38,33 +38,33 @@ export class UserService {
     } else if (createUserDto.role == Role.CUSTOMER && createUserDto.profesion) {
       throw new UnauthorizedException("Oops! Customer already have profesion")
     }
-    const { password, profesion, description,  salary, ...body } = createUserDto
+    const { password, profesion, description, salary, ...body } = createUserDto
     const hash = await bcrypt.hash(password, 10)
     const emailToken = uuidv4();
     const user = this.userRepository.create({ ...body, password: hash, isVerified: 0, emailToken });
     const us = await this.userRepository.save(user);
 
-    if(us.role == Role.CUSTOMER){
-      await this.customerService.create({userId:us.id, description})
-    }else if(us.role == Role.FREELANCER){
+    if (us.role == Role.CUSTOMER) {
+      await this.customerService.create({ userId: us.id, description })
+    } else if (us.role == Role.FREELANCER) {
       await this.freelancerService.create({
-        userId:us.id,
-        salary:salary,
-        profesion:profesion
+        userId: us.id,
+        salary: salary,
+        profesion: profesion
       })
     }
 
-    const url = `http://localhost:3000/verify?email=${body.email}&emailToken=${emailToken}`;
-    await this.mailerService.sendMail({
-      to: body.email,
-      from: '...',
-      subject: 'Welcome to CustomerFreelancer page! Confirm your Email',
-      html: `Hi! There, You have recently visited 
-      our website and entered your email.
-      Please follow the given link to verify your email
-      <a href='${url}'>click</a>       
-      Thanks`
-    });
+    // const url = `http://localhost:3000/verify?email=${body.email}&emailToken=${emailToken}`;
+    // await this.mailerService.sendMail({
+    //   to: body.email,
+    //   from: '...',
+    //   subject: 'Welcome to CustomerFreelancer page! Confirm your Email',
+    //   html: `Hi! There, You have recently visited 
+    //   our website and entered your email.
+    //   Please follow the given link to verify your email
+    //   <a href='${url}'>click</a>       
+    //   Thanks`
+    // });
     return "add user"
   }
 
@@ -79,9 +79,9 @@ export class UserService {
         email: user.email,
         emailToken: user.emailToken
       },
-      relations:{
-        freelancer:true,
-        customer:true
+      relations: {
+        freelancer: true,
+        customer: true
       }
     })
     if (us) {
@@ -93,18 +93,24 @@ export class UserService {
   }
 
   async findOne(username: string) {
-    const user = await this.userRepository.findOne({
+    const user:any = await this.userRepository.findOne({
       where: {
         email: username
       },
       relations: {
-        freelancer:true,
-        customer:true
+        freelancer: true,
+        customer: true
       }
     });
     if (!user) {
       throw new UnauthorizedException("Oops!  user not fount")
     } else {
+      if(!user.freelancer.length){
+        delete user.freelancer
+      }
+      if(!user.customer.length){
+        delete user.customer
+      }
       return user
     }
   }
