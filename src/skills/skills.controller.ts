@@ -22,7 +22,7 @@ export class SkillsController {
   @Post()
   async create(@Body() createSkillDto: CreateSkillDto, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == 0) {
+      if (req.user.roles == 0) {
         const data = await this.skillsService.create(createSkillDto);
         return res.status(HttpStatus.OK).json(data);
       } else {
@@ -74,7 +74,7 @@ export class SkillsController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == 0) {
+      if (req.user.roles == 0) {
         const data = await this.skillsService.update(+id, updateSkillDto);
         return res.status(HttpStatus.OK).json(data);
       } else {
@@ -93,7 +93,7 @@ export class SkillsController {
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.role == 0) {
+      if (req.user.roles == 0) {
         const data = await this.skillsService.remove(+id);
         return res.status(HttpStatus.OK).json(data);
       } else {
