@@ -36,10 +36,19 @@ export class CustomerService {
     })
   }
 
-  async remove(id: number) {
+  // async remove(id: number) {
+  //   const us = await this.customerRepository.findOneBy({ id });
+  //   if (us) {
+  //     this.customerRepository.delete({ id })
+  //     return "delete customer - " + us.id;
+  //   } else {
+  //     throw new NotFoundException('Oops! customer not found');
+  //   }
+  // }
+  async update(id: number, updateCustomerDto: UpdateCustomerDto) {
     const us = await this.customerRepository.findOneBy({ id });
     if (us) {
-      this.customerRepository.delete({ id })
+      this.customerRepository.update({ id }, updateCustomerDto)
       return "delete customer - " + us.id;
     } else {
       throw new NotFoundException('Oops! customer not found');

@@ -22,12 +22,8 @@ export class JobsController {
   @Post()
   async create(@Body() createJobDto: CreateJobDto, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.roles == Role.CUSTOMER) {
-        const data = await this.jobsService.create({ ...createJobDto, customerId: req.user.customer[0].id });
-        return res.status(HttpStatus.OK).json(data);
-      } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Oops! you do not have access' })
-      }
+      const data = await this.jobsService.create({ ...createJobDto, customerId: req.user.customer[0].id });
+      return res.status(HttpStatus.OK).json(data);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
@@ -99,46 +95,34 @@ export class JobsController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.roles == Role.CUSTOMER) {
-        const data = await this.jobsService.update(+id, updateJobDto);
-        return res.status(HttpStatus.OK).json(data);
-      } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access" })
-
-      }
+      const data = await this.jobsService.update(+id, updateJobDto);
+      return res.status(HttpStatus.OK).json(data);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
   }
+
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ description: "customer—ին հնարավորություն է տալիս թարմացնել job-ի status-ը " })
   @HasRoles(Role.CUSTOMER)
   @Patch('updateJobStatus/:id')
   async updateJobStatus(@Param('id') id: string, @Body() updateJobDto: UpdateJobStatus, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.roles == Role.CUSTOMER) {
-        const data = await this.jobsService.updateJobStatus(+id, updateJobDto);
-        return res.status(HttpStatus.OK).json(data);
-      } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error:"Oops! you don't have any access" })
-
-      }
+      const data = await this.jobsService.updateJobStatus(+id, updateJobDto);
+      return res.status(HttpStatus.OK).json(data);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
   }
+  
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ description: "customer—ին հնարավորություն է տալիս job-ի համար հաստատել freelancer-ին" })
   @HasRoles(Role.CUSTOMER)
   @Patch('saveFreelancer/:jobId/:freelancerId')
   async saveFreelancer(@Param('jobId') jobId: number, @Param('freelancerId') freelancerId: number, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.roles == Role.CUSTOMER) {
-        const data = await this.jobsService.saveFreelancer({ jobId, freelancerId });
-        return res.status(HttpStatus.OK).json(data);
-      } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access" })
-      }
+      const data = await this.jobsService.saveFreelancer({ jobId, freelancerId });
+      return res.status(HttpStatus.OK).json(data);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
@@ -150,12 +134,8 @@ export class JobsController {
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.roles == Role.CUSTOMER) {
-        const data = await this.jobsService.remove(+id);
-        return res.status(HttpStatus.OK).json(data);
-      } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Oops! you don't have any access"})
-      }
+      const data = await this.jobsService.remove(+id);
+      return res.status(HttpStatus.OK).json(data);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }

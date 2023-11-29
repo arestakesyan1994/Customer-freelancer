@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, HttpCode, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, HttpCode, UseGuards, Query, Request } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -6,6 +6,9 @@ import { Response } from 'express';
 import { ApiBearerAuth, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger/dist/decorators';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ForgotPassword } from './dto/forgot-password';
+import { ResetPassword } from './dto/reset-password';
 
 class Verify {
   @ApiProperty()
@@ -31,8 +34,6 @@ export class UserController {
     }
   }
 
-
-
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({ description: "հնարավորություն է տալիս վերցնել բոլոր user-ի տվյալները" })
@@ -49,27 +50,43 @@ export class UserController {
     }
   }
 
+  // @HttpCode(HttpStatus.OK)
+  // @ApiResponse({ description: "հնարավորություն է տալիս վերցնել user-ի տվյալը ըստ id-ի" })
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Get(':id')
+  // async findOneBy(@Param('id') id: number, @Res() res: Response) {
+  //   try {
+  //     const data = await this.userService.findOneById(id)
+  //     return res.status(HttpStatus.OK).json(data)
+  //   } catch (e) {
+  //     return res.status(HttpStatus.BAD_REQUEST).json({
+  //       error: e.message
+  //     })
+  //   }
+  // }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ description: "հնարավորություն է տալիս վերցնել user-ի տվյալը ըստ id-ի" })
   @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get(':id')
-  async findOneBy(@Param('id') id: number, @Res() res: Response) {
+  @ApiResponse({ description: "հնարավորություն է տալիս փոփոխել user-ի password" })
+  @Patch('/us/changepassword')
+  async changePassword(
+    @Body() changePassword: ChangePasswordDto,
+    @Res() res: Response,
+    @Request() req
+  ) {
     try {
-
-      const data = await this.userService.findOneById(id)
-      return res.status(HttpStatus.OK).json(data)
+      const data = await this.userService.changePassword(changePassword, req.user.userId);
+      return res.status(HttpStatus.OK).json(data);
     } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        error: e.message
-      })
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
     }
   }
 
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
-  @ApiResponse({ description: "հնարավորություն է տալիս փոփոխել user-ի տվյալները -> name, surname, password" })
+  @ApiResponse({ description: "հնարավորություն է տալիս փոփոխել user-ի տվյալները -> name, surname" })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
@@ -82,6 +99,38 @@ export class UserController {
       })
     }
   }
+
+
+  @HttpCode(HttpStatus.OK)
+  @Patch('/us/forgotPassword')
+  async forgotPassword(
+    @Body() forgotPassword: ForgotPassword,
+    @Res() res: Response,
+    @Request() req
+  ) {
+    try {
+      const data = await this.userService.forgotPassword(forgotPassword)
+      return res.status(HttpStatus.OK).json(data);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
+    }
+  }
+  @HttpCode(HttpStatus.OK)
+  @Patch('/us/resetPassword/:email')
+  async resetPassword(
+    @Body() resetPassword: ResetPassword,
+    @Param("email") email: string,
+    @Res() res: Response,
+    @Request() req
+  ) {
+    try {
+      const data = await this.userService.resetPassword(resetPassword, email)
+      return res.status(HttpStatus.OK).json(data);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
+    }
+  }
+
 
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ description: "հնարավորություն է տալիս ջնջել user-ին" })

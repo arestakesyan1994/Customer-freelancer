@@ -14,13 +14,7 @@ import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger/dist/decorators/api-use-tags.decorator';
 import { ApiBearerAuth, ApiProperty, ApiResponse } from '@nestjs/swagger';
 import { CreateUserDto } from './user/dto/create-user.dto';
-
-export class Us {
-  @ApiProperty()
-  username: string
-  @ApiProperty()
-  password: string
-}
+import { Login } from './user/dto/login-user.dto';
 
 @ApiTags("Auth*")
 @Controller()
@@ -29,18 +23,19 @@ export class AppController {
     private readonly userSerevice: UserService,
     private authService: AuthService) { }
 
-
+  @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  @ApiResponse({description:"հարկավոր է մուտքագրել username և password, որպես պատասխան ստանում ենք access_token"})
-  async login(@Body() us: Us,@Request() req) {
-    console.log(us);    
+  @ApiResponse({ description: "հարկավոր է մուտքագրել username և password, որպես պատասխան ստանում ենք access_token" })
+  async login(@Body() us: Login, @Request() req) {
+    console.log(us);
     return this.authService.login(req.user);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post("/register")
-  @ApiResponse({description:`profesion և salary դաշտերը լրացնում ենք միյան այն դեպքում, երբ տվյալ մարդը գրանցվում է որպես freelancer։\n
+  @ApiResponse({
+    description: `profesion և salary դաշտերը լրացնում ենք միյան այն դեպքում, երբ տվյալ մարդը գրանցվում է որպես freelancer։\n
   description դաշտը լրացնում ենք միյան այն դեպքում, երբ տվյալ մարդը գրանցվում է որպես customer\n
   Կարող ենք գրանցում որպես admin(role = 0), customer(role = 1) կամ freelancer(role = 2),\n
    տվյալ էջում կա միայն մեկ admin, էջում գրանցվելիս մարդ ունի ընտրության 2 հնարավորություն customer կամ freelancer`})
@@ -56,7 +51,7 @@ export class AppController {
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
   @UseGuards(JwtAuthGuard)
-  @ApiResponse({description:"վերադարձնում է login եղած մարդու տվյալները"})
+  @ApiResponse({ description: "ըստ access_token -ի վերադարձնում է login եղած մարդու տվյալները" })
   @Get('profile')
   async getProfile(@Request() req, @Res() res: Response) {
     try {
@@ -68,5 +63,4 @@ export class AppController {
       })
     }
   }
-
 }

@@ -23,7 +23,7 @@ export class Freelancer{
     salary: number
 
     @Column()
-    profesion: string
+    profession: string
 
     @OneToMany(type => UserSkill, usSkill => usSkill.freelancer)
     skills: UserSkill[]

@@ -89,13 +89,13 @@ export class FreelancerService {
     }
   }
 
-  async remove(id: number) {
-    const us = await this.freelancerRepository.findOneBy({ id });
-    if (us) {
-      this.freelancerRepository.delete({ id })
-      return "delete freelancer - " + us.id;
-    } else {
-      throw new NotFoundException('Oops! freelancer not found');
-    }
-  }
+  // async remove(id: number) {
+  //   const us = await this.freelancerRepository.findOneBy({ id });
+  //   if (us) {
+  //     this.freelancerRepository.delete({ id })
+  //     return "delete freelancer - " + us.id;
+  //   } else {
+  //     throw new NotFoundException('Oops! freelancer not found');
+  //   }
+  // }
 }

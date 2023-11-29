@@ -31,7 +31,7 @@ import { Freelancer } from './freelancer/entities/freelancer.entity';
       port: 3306,
       username: 'root',
       password: '',
-      database: 'test',
+      database: 'customer-freelancer',
       entities: [User,   Skill, UserSkill, Job, JobSkill, JobUser,   Customer, Freelancer],
       synchronize: true,
     }),

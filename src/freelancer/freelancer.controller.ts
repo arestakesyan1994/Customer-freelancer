@@ -64,15 +64,15 @@ export class FreelancerController {
     }
   }
 
-  @HttpCode(HttpStatus.OK)
-  @ApiResponse({description:"հնարավորություն է տալիս ջնջել customer-ի տվյալները"})
-  @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: Response) {
-    try {
-      const data = await this.freelancerService.remove(+id);
-      return res.status(HttpStatus.OK).json(data)
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
-    }
-  }
+  // @HttpCode(HttpStatus.OK)
+  // @ApiResponse({description:"հնարավորություն է տալիս ջնջել customer-ի տվյալները"})
+  // @Delete(':id')
+  // async remove(@Param('id') id: string, @Res() res: Response) {
+  //   try {
+  //     const data = await this.freelancerService.remove(+id);
+  //     return res.status(HttpStatus.OK).json(data)
+  //   } catch (e) {
+  //     return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
+  //   }
+  // }
 }

@@ -10,7 +10,7 @@ export class CreateUserDto {
     @ApiProperty()
     password:string
     @ApiProperty()
-    profesion:string
+    profession:string
     @ApiProperty()
     role:number
     @ApiProperty()

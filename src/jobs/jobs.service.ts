@@ -20,12 +20,12 @@ export class JobsService {
   ) { }
 
   async create(createJobDto: any) {
-    const {skills, ...data} = createJobDto
+    const { skills, ...data } = createJobDto
     const job = await this.jobRepository.save({ ...data, status: StatusEnum.START })
-    console.log(job);    
-    if(skills && skills.length){
-      for(let e of skills){
-        await this.jobSkillsService.create({jobId:job.id, skillId:e})
+    console.log(job);
+    if (skills && skills.length) {
+      for (let e of skills) {
+        await this.jobSkillsService.create({ jobId: job.id, skillId: e })
       }
     }
     return 'adds a new job';
@@ -40,9 +40,7 @@ export class JobsService {
       where: {
         id: id
       },
-      relations: {
-        jobSkills: true
-      }
+      relations: ["jobSkills", "jobSkills.skill", 'freelancer', 'freelancer.user']
     })
     if (!job) {
       throw new NotFoundException("Oops! job not fount")
@@ -55,7 +53,7 @@ export class JobsService {
       where: {
         customerId: id
       },
-      relations: [  "jobSkills", "jobSkills.skill", 'freelancer']
+      relations: ["jobSkills", "jobSkills.skill", 'freelancer', 'freelancer.user']
     })
     if (!job) {
       throw new NotFoundException("Oops! job not fount")
@@ -68,7 +66,7 @@ export class JobsService {
       where: {
         freelancerId: id
       },
-      relations: [  "jobSkills", "jobSkills.skill", 'customer']
+      relations: ["jobSkills", "jobSkills.skill", 'customer']
     })
     if (!job) {
       throw new NotFoundException("Oops! job not fount")
@@ -90,7 +88,7 @@ export class JobsService {
     } else {
       return job
     }
-    
+
   }
 
   async update(id: number, updateJobDto: UpdateJobDto) {
@@ -106,30 +104,30 @@ export class JobsService {
       return new NotFoundException('Oops! job not found');
     }
   }
-  async updateJobStatus(id: number,{num} : {num:number}) {
+  async updateJobStatus(id: number, { status }: { status: number }) {
     const job = await this.jobRepository.findOne({
       where: {
         id: id
       }
     })
     if (job) {
-      if(num==0 || num==1 ||num==2){
-        await this.jobRepository.update({ id }, {status:num});
+      if (status == 0 || status == 1 || status == 2) {
+        await this.jobRepository.update({ id }, { status: status });
         return `Updated job - ${job.title}`;
-      }else{
+      } else {
         throw new NotFoundException('Oops! status value invalid');
       }
     } else {
       throw new NotFoundException('Oops! job not found');
     }
   }
-  async saveFreelancer({jobId, freelancerId}:{jobId:number, freelancerId:number}){
+  async saveFreelancer({ jobId, freelancerId }: { jobId: number, freelancerId: number }) {
     const job = await this.jobRepository.findOne({
       where: {
         id: jobId
       }
     })
-    if(!job){
+    if (!job) {
       throw new NotFoundException('Oops! job not found');
     }
     const freelancer = await this.freelancerRepository.findOne({
@@ -137,11 +135,11 @@ export class JobsService {
         id: freelancerId
       }
     })
-    if(!freelancer){
+    if (!freelancer) {
       throw new NotFoundException('Oops! freelancer not found');
     }
-    await this.jobRepository.update({id:jobId}, {freelancerId})
-    await this.jobUserRepository.delete({jobId})
+    await this.jobRepository.update({ id: jobId }, { freelancerId })
+    await this.jobUserRepository.delete({ jobId })
     return "update freelancer id"
 
   }

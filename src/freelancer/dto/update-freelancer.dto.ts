@@ -6,5 +6,5 @@ export class UpdateFreelancerDto extends PartialType(CreateFreelancerDto) {
     salary: number
 
     @ApiProperty()
-    profesion: string
+    profession: string
 }

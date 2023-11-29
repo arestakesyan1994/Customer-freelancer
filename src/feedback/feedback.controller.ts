@@ -10,23 +10,19 @@ import { CreateFeedbackDto } from './dto/CreateFeedbackDto';
 
 @Controller('feedback')
 @ApiTags("Feedback*")
-@ApiBearerAuth('JWT-auth')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) { }
 
   @HttpCode(HttpStatus.OK)
   @HasRoles(Role.CUSTOMER)
-  @ApiResponse({ description: "customer-ին հնարավորություն է տալիս ավարտված job-ի համար գրել feedback,\n ըստ որում ամեն մի job-ի համար հնարավոր է գրել միայն մի feedback\n և feedback կարող է գրել այն customer ով այդ job-ը ավելացրել է" })
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiResponse({ description: "customer-ին հնարավորություն է տալիս ավարտված job-ի համար գրել feedback,\n ընդ որում ամեն մի job-ի համար հնարավոր է գրել միայն մի feedback\n և feedback կարող է գրել այն customer ով այդ job-ը ավելացրել է" })
   @Post(":jobId")
-  async create(@Param("jobId")jobId:number,@Body() createFeedbackDto: CreateFeedbackDto, @Res() res: Response, @Request() req) {
+  async create(@Param("jobId") jobId: number, @Body() createFeedbackDto: CreateFeedbackDto, @Res() res: Response, @Request() req) {
     try {
-      if (req.user.roles == 1) {
-        const data = await this.feedbackService.create({ ...createFeedbackDto, user: req.user,  jobId});
+        const data = await this.feedbackService.create({ ...createFeedbackDto, user: req.user, jobId });
         return res.status(HttpStatus.OK).json(data);
-      } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Oops! you do not have access' })
-      }
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }

@@ -14,5 +14,5 @@ export class UpdateJobDto {
 
 export class UpdateJobStatus {
     @ApiProperty()
-    num:number
+    status:number
 }

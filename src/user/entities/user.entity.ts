@@ -26,6 +26,8 @@ export class User {
 
     @Column({ default: 0 })
     isVerified: number;
+    @Column({ default: 0 })
+    code: number;
 
     @Column()
     role: Role
