@@ -25,7 +25,7 @@ export class Job {
     @Column("int")
     customerId: number
 
-    @Column({nullable:true, select: false})
+    @Column({nullable:true})
     freelancerId: number
 
     @Column({ default: 0 })

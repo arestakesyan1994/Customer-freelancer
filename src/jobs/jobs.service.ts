@@ -48,31 +48,74 @@ export class JobsService {
       return job
     }
   }
-  async findJobsByCustomerId(id: number) {
-    const job = await this.jobRepository.find({
-      where: {
-        customerId: id
-      },
-      relations: ["jobSkills", "jobSkills.skill", 'freelancer', 'freelancer.user']
-    })
-    if (!job) {
-      throw new NotFoundException("Oops! job not fount")
+  async findJobsByCustomerId(id: number, status: number) {
+    if (status) {
+      const job = await this.jobRepository.find({
+        where: {
+          customerId: id,
+          status
+        },
+        relations: ["jobSkills", "jobSkills.skill", 'freelancer', 'freelancer.user']
+      })
+      if (!job) {
+        throw new NotFoundException("Oops! job not fount")
+      } else {
+        return job
+      }
+
     } else {
-      return job
+      const job = await this.jobRepository.find({
+        where: {
+          customerId: id
+        },
+        relations: ["jobSkills", "jobSkills.skill", 'freelancer', 'freelancer.user']
+      })
+      if (!job) {
+        throw new NotFoundException("Oops! job not fount")
+      } else {
+        return job
+      }
     }
   }
-  async findJobsByFreelancerId(id: number) {
+  async findJobsByFreelancerId(id: number, status: number) {
+    console.log(id, status);
+
+    if (status) {
+      const job = await this.jobRepository.find({
+        where: {
+          freelancerId: id,
+          status
+        },
+        relations: ["jobSkills", "jobSkills.skill", 'customer']
+      })
+      if (!job) {
+        throw new NotFoundException("Oops! job not fount")
+      } else {
+        return job
+      }
+    } else {
+
+      const job = await this.jobRepository.find({
+        where: {
+          freelancerId: id
+        },
+        relations: ["jobSkills", "jobSkills.skill", 'customer']
+      })
+      if (!job) {
+        throw new NotFoundException("Oops! job not fount")
+      } else {
+        return job
+      }
+    }
+  }
+  async findJobsByFreelancerIdgetFeedback(id: number) {
     const job = await this.jobRepository.find({
       where: {
-        freelancerId: id
+        freelancerId: id,
+        status: 2
       },
-      relations: ["jobSkills", "jobSkills.skill", 'customer']
     })
-    if (!job) {
-      throw new NotFoundException("Oops! job not fount")
-    } else {
-      return job
-    }
+    return { job, rate: job.reduce((a, b) => a + b.rate, 0) / job.length }
   }
   async findJobsByStatus(status: number) {
     const job = await this.jobRepository.find({

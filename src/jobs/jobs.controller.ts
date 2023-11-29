@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, HttpStatus, Res, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, HttpStatus, Res, Request, Query } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto, UpdateJobStatus } from './dto/update-job.dto';
@@ -68,9 +68,25 @@ export class JobsController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ description: "հնարավորություն է տալիս տեսնել job—ի տվյալները ըստ freelancerId-ի" })
   @Get('findJobsByFreelancerId/:id')
-  async findJobsByFreelancerId(@Param('id') status: string, @Res() res: Response) {
+  async findJobsByFreelancerId(
+    @Query("status") status: number,
+    @Param('id') id: string, 
+    @Res() res: Response) {
     try {
-      const data = await this.jobsService.findJobsByFreelancerId(+status);
+      const data = await this.jobsService.findJobsByFreelancerId(+id, status);
+      return res.status(HttpStatus.OK).json(data);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
+    }
+  }
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ description: "հնարավորություն է տալիս տեսնել job—ի տվյալները ըստ freelancerId-ի" })
+  @Get('findJobsByFreelancerId/getRate/getFeedback/:id')
+  async findJobsByFreelancerIdgetFeedback(
+    @Param('id') id: string, 
+    @Res() res: Response) {
+    try {
+      const data = await this.jobsService.findJobsByFreelancerIdgetFeedback(+id);
       return res.status(HttpStatus.OK).json(data);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
@@ -80,9 +96,12 @@ export class JobsController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ description: "հնարավորություն է տալիս տեսնել job—ի տվյալները ըստ customerId-ի" })
   @Get('findJobsByCustomerId/:id')
-  async findJobsByCustomerId(@Param('id') status: string, @Res() res: Response) {
+  async findJobsByCustomerId(
+    @Query("status") status: number,
+    @Param('id') id: string,
+    @Res() res: Response) {
     try {
-      const data = await this.jobsService.findJobsByCustomerId(+status);
+      const data = await this.jobsService.findJobsByCustomerId(+id, status);
       return res.status(HttpStatus.OK).json(data);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
@@ -114,7 +133,7 @@ export class JobsController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message })
     }
   }
-  
+
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ description: "customer—ին հնարավորություն է տալիս job-ի համար հաստատել freelancer-ին" })
   @HasRoles(Role.CUSTOMER)
@@ -130,7 +149,7 @@ export class JobsController {
 
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ description: "customer—ին հնարավորություն է տալիս ջնջել job-ը" })
-  @HasRoles(Role.CUSTOMER)
+  @HasRoles(Role.CUSTOMER, Role.ADMIN)
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response, @Request() req) {
     try {
