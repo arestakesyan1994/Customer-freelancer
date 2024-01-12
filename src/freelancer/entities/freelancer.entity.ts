@@ -2,18 +2,15 @@ import { JobUser } from "src/job-user/entities/job-user.entity";
 import { Job } from "src/jobs/entities/job.entity";
 import { UserSkill } from "src/user-skills/entities/user-skill.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Freelancer{
-    
-    @PrimaryGeneratedColumn()
-    id: number;
+export class Freelancer {
 
-    @Column()
-    userId:number
+    @PrimaryColumn()
+    userId: number;
 
-    @ManyToOne(type => User, user =>user.freelancer, {
+    @ManyToOne(type => User, user => user.freelancer, {
         onUpdate: "CASCADE",
         onDelete: "CASCADE"
     })
@@ -31,7 +28,7 @@ export class Freelancer{
     @OneToMany(type => JobUser, jobuser => jobuser.freelancer)
     applay: JobUser[]
 
-    
+
     @OneToMany(type => Job, job => job.freelancer)
     jobs: Job[]
 }

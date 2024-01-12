@@ -30,11 +30,10 @@ export class UserSkillsService {
     if (user.role != 2) {
       throw new NotFoundException('Oops! you do not have access');
     }
-    const us = await this.userRepository.findOne({ where: { id: createUserSkillDto.freelancerId }, relations: { freelancer: true } })
     const userskill = await this.userSkillRepository.find({
       where: {
         skillId: createUserSkillDto.skillId,
-        freelancerId: us.freelancer[0].id
+        freelancerId: user.id
       },
     })
     if (userskill.length) {
@@ -42,10 +41,9 @@ export class UserSkillsService {
     }
     await this.userSkillRepository.save({
       skillId: createUserSkillDto.skillId,
-      freelancerId: us.freelancer[0].id
+      freelancerId: user.id
     })
     return 'adds a new user skill';
-
   }
 
   async findSkillByFreelacerId(id: number) {
@@ -66,7 +64,7 @@ export class UserSkillsService {
     const skill = await this.userSkillRepository.findOneBy({ id });
     if (skill) {
       this.userSkillRepository.delete({ id })
-      return "delete user skill - " + skill.id;
+      return true;
     } else {
       throw new NotFoundException('Oops! user skills not found');
     }

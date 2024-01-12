@@ -56,7 +56,7 @@ export class AppController {
   async getProfile(@Request() req, @Res() res: Response) {
     try {
       const data = await this.userSerevice.findOne(req.user.username)
-      return res.status(HttpStatus.OK).json({ user: data })
+      return res.status(HttpStatus.OK).json(data)
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message

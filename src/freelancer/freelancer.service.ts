@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateFreelancerDto } from './dto/create-freelancer.dto';
 import { UpdateFreelancerDto } from './dto/update-freelancer.dto';
@@ -9,6 +10,7 @@ import { Freelancer } from './entities/freelancer.entity';
 export class FreelancerService {
   constructor(
     @InjectRepository(Freelancer) private freelancerRepository: Repository<Freelancer>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) { }
 
   async create(createFreelancerDto: CreateFreelancerDto) {
@@ -17,24 +19,27 @@ export class FreelancerService {
   }
 
   async findAll() {
-    return this.freelancerRepository.find({
-      relations: {
-        user: true
-      }
-    });
+    return  await this.freelancerRepository
+    .createQueryBuilder("freelancer")
+    .innerJoinAndSelect("freelancer.user", "user")
+    .select(["freelancer","user.id", "user.name", "user.surname", "user.email", "user.role"])
+    .getMany();
   }
 
   async findOne(id: number) {
 
-    const user =  await this.freelancerRepository
+    const user = await this.freelancerRepository
       .createQueryBuilder('freelancer')
-      .where('freelancer.id = :id', { id })
+      .leftJoinAndSelect('freelancer.user', 'user')
       .leftJoinAndSelect('freelancer.jobs', 'job')
+      .where('freelancer.userId = :id', { id })
+      .leftJoinAndSelect('job.customer', 'customer')
+      .select(["job.id", "job.title", "job.description", "job.price", "job.status", "job.rate", "customer", "user.id", "user.name", "user.surname", "user.email", "freelancer.profession", "freelancer.salary"])
       .getOne();
-      const avg = user.jobs.filter(elm=>elm.rate).reduce((a, b)=>a+b.rate, 0)/user.jobs.filter(elm=>elm.rate).length
-      return {...user, avg}
+    const avg = user.jobs.filter(elm => elm.rate && elm.status == 2).reduce((a, b) => a + b.rate, 0) / user.jobs.filter(elm => elm.rate && elm.status == 2).length
+    return { ...user , avg}
   }
-
+  
   async findUserBySkillAndSalary({ skill, minsalary, maxsalary }: { skill: string, minsalary: number, maxsalary: number }) {
     if (!minsalary) { minsalary = 0 }
     if (!maxsalary) {
@@ -49,7 +54,7 @@ export class FreelancerService {
       }
     }
     console.log(minsalary, maxsalary, skill);
-    
+
     let freelancer = undefined;
     if (skill && skill != ' ') {
       freelancer = await this.freelancerRepository
@@ -80,22 +85,17 @@ export class FreelancerService {
   }
 
   async update(id: number, updateFreelancerDto: UpdateFreelancerDto) {
-    const us = await this.freelancerRepository.findOneBy({ id });
-    if (us) {
-      this.freelancerRepository.update({ id }, updateFreelancerDto)
-      return "delete freelancer - " + us.id;
+    const user = await this.userRepository.findOneBy({ id });
+    if (user) {
+      const us = await this.freelancerRepository.findOneBy({ user });
+      if (us) {
+        this.freelancerRepository.update({ user }, updateFreelancerDto)
+        return true;
+      } else {
+        throw new NotFoundException('Oops! freelancer not found');
+      }
     } else {
-      throw new NotFoundException('Oops! freelancer not found');
+      throw new NotFoundException('Oops! user not found');
     }
   }
-
-  // async remove(id: number) {
-  //   const us = await this.freelancerRepository.findOneBy({ id });
-  //   if (us) {
-  //     this.freelancerRepository.delete({ id })
-  //     return "delete freelancer - " + us.id;
-  //   } else {
-  //     throw new NotFoundException('Oops! freelancer not found');
-  //   }
-  // }
 }

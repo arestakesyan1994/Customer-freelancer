@@ -28,11 +28,11 @@ export class JobSkillService {
     if (!job) {
       throw new NotFoundException('Oops! job not found');
     }
-    const user = await this.userRepository.findOne({ where: { id: userId }, relations: { freelancer: true } })
+    const user = await this.userRepository.findOne({ where: { id: userId } })
     if (!user) {
       throw new NotFoundException('Oops! user not found');
     }
-    if (user.freelancer[0].id != userId) {
+    if (user.id!= userId) {
       throw new NotFoundException('Oops! you do not have access');
     }
     const userskill = await this.jobSkillRepository.find({
@@ -68,7 +68,7 @@ export class JobSkillService {
     if (!user) {
       throw new NotFoundException('Oops! user not found');
     }
-    if (user.freelancer[0].id != userId) {
+    if (user.id != userId) {
       throw new NotFoundException('Oops! you do not have access');
     } else {
       const jskill = await this.jobSkillRepository.findOneBy({ id });

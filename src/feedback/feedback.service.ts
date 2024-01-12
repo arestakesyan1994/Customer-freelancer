@@ -15,7 +15,7 @@ export class FeedbackService {
 
 
   async create(createFeedbackDto: any) {
-    const us = await this.userRepository.findOne({where:{ id: createFeedbackDto.user.userId }, relations:{freelancer:true}})
+    const us = await this.userRepository.findOne({ where: { id: createFeedbackDto.user.userId }, relations: { freelancer: true } })
     if (!us) {
       throw new NotFoundException('Oops! user not found');
     }
@@ -24,8 +24,8 @@ export class FeedbackService {
       throw new NotFoundException('Oops! job not found');
     }
     const { user, jobId, ...data } = createFeedbackDto;
-    if (job.customerId == user.customer[0].id && job.status == 2) {
-      await this.jobRepository.update({id:jobId},data)
+    if (job.customerId == user.id && job.status == 2) {
+      await this.jobRepository.update({ id: jobId }, data)
       return 'adds a new feedback';
     } else {
       if (job.status != 2) {

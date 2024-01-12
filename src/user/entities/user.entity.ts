@@ -32,11 +32,11 @@ export class User {
     @Column()
     role: Role
 
-    @OneToMany(type => Customer, customer => customer.user)
-    customer: Customer
+    @OneToMany(type => Customer, customer => customer.user, { cascade: true })
+    customer: Customer[]
  
-    @OneToMany(type => Freelancer, freelancer => freelancer.user)
-    freelancer: Freelancer
+    @OneToMany(type => Freelancer, freelancer => freelancer.user, { cascade: true })
+    freelancer: Freelancer[]
     
     
 }

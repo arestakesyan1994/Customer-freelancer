@@ -30,14 +30,14 @@ export class JobUserService {
     if (user.role == Role.FREELANCER) {
       const userjob = await this.jobUserRepository.findOne({
         where: {
-          freelancerId: user.freelancer[0].id,
+          freelancer: user.freelancer,
           jobId: createJobUserDto.jobId
         },
       })
       if (userjob) {
         throw new NotFoundException('Oops! jobUser has already');
       } else {
-        await this.jobUserRepository.save({jobId:createJobUserDto.jobId, freelancerId:user.freelancer[0].id})
+        await this.jobUserRepository.save({jobId:createJobUserDto.jobId, freelancerId:user.id})
         return 'adds a new jobUser';
       }
     } else {

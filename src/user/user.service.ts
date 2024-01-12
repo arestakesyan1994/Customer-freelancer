@@ -36,11 +36,12 @@ export class UserService {
 
     if (users.length) {
       throw new UnauthorizedException("Oops! email has already")
-    } else if (createUserDto.role == Role.FREELANCER && !createUserDto.profession) {
-      throw new UnauthorizedException("Oops! Freelancer must have profession")
-    } else if (createUserDto.role == Role.CUSTOMER && createUserDto.profession) {
-      throw new UnauthorizedException("Oops! Customer already have profession")
-    }
+    } 
+    // else if (createUserDto.role == Role.FREELANCER && !createUserDto.profession) {
+    //   throw new UnauthorizedException("Oops! Freelancer must have profession")
+    // } else if (createUserDto.role == Role.CUSTOMER && createUserDto.profession) {
+    //   throw new UnauthorizedException("Oops! Customer already have profession")
+    // }
     const { password, profession, description, salary, ...body } = createUserDto
     const hash = await bcrypt.hash(password, 10)
     const emailToken = uuidv4();
@@ -71,8 +72,11 @@ export class UserService {
     return "add user"
   }
 
-  findAll() {
-    return this.userRepository.find();
+  async findAll() {
+    return await this.userRepository
+    .createQueryBuilder("user")
+    .select(["user.id", "user.name", "user.surname", "user.email", "user.role"])
+    .getMany();
   }
 
 
@@ -94,30 +98,36 @@ export class UserService {
       throw new NotFoundException("Oops! data not found")
     }
   }
-
-  async findOne(username: string) {
-    const user: any = await this.userRepository.findOne({
-      where: {
-        email: username
-      },
-      relations: {
-        freelancer: true,
-        customer: true
-      }
-    });
+  async findOneForLogin(username: string) {
+    const user: any =await this.userRepository
+    .createQueryBuilder("user")
+    .where("user.email=:username", {username})
+    .getOne();
     if (!user) {
       throw new UnauthorizedException("Oops!  user not fount")
     } else {
-      if (user.freelancer[0]) {
-        user.freelancer = user.freelancer[0]
-      } else {
-        delete user.freelancer
-      }
-      if (user.customer[0]) {
-        user.customer = user.customer[0]
-      } else {
-        delete user.customer
-      }
+      return user
+    }
+  }
+  async findOne(username: string) {
+    const user: any =await this.userRepository
+    .createQueryBuilder("user")
+    .where("user.email=:username", {username})
+    .select(["user.id", "user.name", "user.surname", "user.email", "user.role"])
+    .getOne();
+    if (!user) {
+      throw new UnauthorizedException("Oops!  user not fount")
+    } else {
+      // if (user.freelancer[0]) {
+      //   user.freelancer = user.freelancer[0]
+      // } else {
+      //   delete user.freelancer
+      // }
+      // if (user.customer[0]) {
+      //   user.customer = user.customer[0]
+      // } else {
+      //   delete user.customer
+      // }
       return user
     }
   }

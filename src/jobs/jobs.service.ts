@@ -4,6 +4,7 @@ import { Freelancer } from 'src/freelancer/entities/freelancer.entity';
 import { JobSkillService } from 'src/job-skill/job-skill.service';
 import { JobUser } from 'src/job-user/entities/job-user.entity';
 import { UserSkillsService } from 'src/user-skills/user-skills.service';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -13,6 +14,7 @@ import { StatusEnum } from './status/status.enum';
 @Injectable()
 export class JobsService {
   constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Job) private jobRepository: Repository<Job>,
     @InjectRepository(Freelancer) private freelancerRepository: Repository<Freelancer>,
     @InjectRepository(JobUser) private jobUserRepository: Repository<JobUser>,
@@ -173,18 +175,22 @@ export class JobsService {
     if (!job) {
       throw new NotFoundException('Oops! job not found');
     }
-    const freelancer = await this.freelancerRepository.findOne({
-      where: {
-        id: freelancerId
+    const user = await this.userRepository.findOneBy({ id: freelancerId })
+    if (user) {
+      const freelancer = await this.freelancerRepository.findOne({
+        where: {
+          user
+        }
+      })
+      if (!freelancer) {
+        throw new NotFoundException('Oops! freelancer not found');
       }
-    })
-    if (!freelancer) {
-      throw new NotFoundException('Oops! freelancer not found');
+      await this.jobRepository.update({ id: jobId }, { freelancerId })
+      await this.jobUserRepository.delete({ jobId })
+      return "update freelancer id"
+    } else {
+      throw new NotFoundException('Oops! user not found');
     }
-    await this.jobRepository.update({ id: jobId }, { freelancerId })
-    await this.jobUserRepository.delete({ jobId })
-    return "update freelancer id"
-
   }
   async remove(id: number) {
     const job = await this.jobRepository.findOneBy({ id });

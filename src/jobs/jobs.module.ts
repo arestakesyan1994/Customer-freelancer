@@ -7,9 +7,10 @@ import { JobSkillService } from 'src/job-skill/job-skill.service';
 import { JobSkillModule } from 'src/job-skill/job-skill.module';
 import { Freelancer } from 'src/freelancer/entities/freelancer.entity';
 import { JobUser } from 'src/job-user/entities/job-user.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Job, Freelancer, JobUser]), JobSkillModule ],
+  imports:[TypeOrmModule.forFeature([Job, Freelancer, JobUser, User]), JobSkillModule ],
   controllers: [JobsController],
   providers: [JobsService],
   exports: [JobsService]
